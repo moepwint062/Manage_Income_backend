@@ -29,7 +29,7 @@ class IncomeController extends Controller
      */
     public function store(Request $request)
     {
-        error_log($request);
+        // error_log($request);
         $request->validate([
             'income' => 'required'
         ]);
@@ -38,14 +38,19 @@ class IncomeController extends Controller
         // $currentMonth = 'Aug';
         
         if($request !== NULL) {
-            $income = new Income();
-            $income->month = $currentMonth;
-            $income->income = $request->input('income');
-            $income->save_money = $request->input('income') * 0.1;
-            $income->tax_money = $request->input('income') * 0.1;
-            $income->general_expenses = $request->input('income') * 0.6;
-            $income->extra_money = $request->input('income') * 0.2;
-            $income->save();
+            $existedMonth = Income::where('month', '=', $currentMonth)->orderBy('id', 'ASC')->first();
+            if($existedMonth == NULL) {
+                $income = new Income();
+                $income->month = $currentMonth;
+                $income->income = $request->input('income');
+                $income->save_money = $request->input('income') * 0.1;
+                $income->tax_money = $request->input('income') * 0.1;
+                $income->general_expenses = $request->input('income') * 0.6;
+                $income->extra_money = $request->input('income') * 0.2;
+                $income->save();
+            } else {
+                return response()->json(['result' => false, 'message' => "Income for this month is already existed!"]);
+            }
         } else {
             return response()->json(['result' => false, 'message' => "Please type income amount!"]);
         }

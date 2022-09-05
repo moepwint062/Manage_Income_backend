@@ -35,7 +35,7 @@ class WishesController extends Controller
      */
     public function store(Request $request)
     {
-        error_log($request);
+        // error_log($request);
         $request->validate([
             'item' => 'required',
             'price' => 'required'
